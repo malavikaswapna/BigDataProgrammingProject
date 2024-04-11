@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trips Prediction</title>
+</head>
+<body>
+    <h1>Welcome to the Trips Prediction API!</h1>
+    
+    <h2>Make a Prediction</h2>
+    <form id="prediction-form">
+        <label for="trips-1-25-miles">Trips 1-25 Miles:</label>
+        <input type="number" id="trips-1-25-miles" name="trips-1-25-miles" required>
+        <br>
+        <label for="trips-25-100-miles">Trips 25-100 Miles:</label>
+        <input type="number" id="trips-25-100-miles" name="trips-25-100-miles" required>
+        <br>
+        <button type="submit">Predict</button>
+    </form>
+
+    <h2>Prediction Results</h2>
+    <div id="prediction-results"></div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
+            fetch('/predict', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData.entries())),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultsDiv = document.getElementById('prediction-results');
+                resultsDiv.innerHTML = '';
+                for (var key in data) {
+                    resultsDiv.innerHTML += '<p>' + key + ': ' + data[key] + '</p>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
